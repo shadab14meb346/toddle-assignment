@@ -1,0 +1,18 @@
+.row {
+	display: flex;
+	flex-wrap: flex;
+	border: 1px solid #ddd;
+	margin: 3px 0;
+	align-items: center;
+	height: 20px;
+}
+
+.textBox {
+	padding: 0 10px;
+}
+
+.indent {
+	background: #ddd;
+	width: 20px;
+	height: 100%;
+}
