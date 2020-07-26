@@ -1,7 +1,7 @@
 .main {
 	width: calc(100% - 2px);
-	height: 50px;
-	border: 1px solid #ddd;
+	height: 40px;
+	border-bottom: 1px solid #ddd;
 	margin: 5px 0;
 	display: flex;
 	flex-wrap: wrap;
@@ -25,4 +25,10 @@
 	height: 20px;
 	text-align: center;
 	margin: 0 3px;
+}
+.arrow:hover {
+	color: #18dc60;
+}
+.indent-text {
+	display: none;
 }

@@ -1,18 +1,19 @@
+import fs from 'fs';
 const ID = function () {
 	return '_' + Math.random().toString(36).substr(2, 9);
 };
 
-export class Node {
+class Node {
 	constructor(value) {
 		this.id = ID();
 		this.value = value;
 		this.children = [];
-		this.parent = null;
+		this.parentId = null;
 		this.level = null;
 	}
 
 	append(node) {
-		node.parent = this;
+		node.parentId = this.id;
 		const l = this.level === null ? -1 : this.level;
 		node.level = l + 1;
 		this.children.push(node);
@@ -27,9 +28,9 @@ export class Node {
 	}
 }
 
-export class Tree {
+class Tree {
 	constructor() {
-		this.root = null;
+		this.root = new Node('root');
 	}
 
 	// add node
@@ -85,24 +86,26 @@ export class Tree {
 			this.updateLevels(child);
 		}
 	}
-	traverseBF(fn) {
-		let newTree = new Tree();
-		const arr = [this.root];
-		while (arr.length) {
-			const node = arr.shift();
-
-			arr.push(...node.children);
-
-			newTree.add(node.parent === null ? node['id'] : node.parent.id, node);
-			fn(node);
-		}
-		return newTree;
-	}
-	traverseAndCopy() {
-		const newTree = new Tree();
-		const arr = [this.root];
-		while (arr.length) {
-			this.add(this.root);
-		}
-	}
 }
+
+const tree1 = new Tree();
+
+const root = new Node('root');
+
+tree1.root = root;
+
+const numbers = new Node('numbers');
+const count = new Node('count');
+
+const maths = new Node('maths');
+const d = new Node('describe');
+const d2 = new Node('describe child');
+
+// tree1.add(tree1.root.id, numbers);
+// tree1.add(tree1.root.id, maths);
+
+// tree1.add(numbers.id, count);
+// tree1.add(maths.id, d);
+// tree1.add(d.id, d2);
+
+export { tree1, Node };
