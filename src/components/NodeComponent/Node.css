@@ -2,16 +2,19 @@
 	width: calc(100% - 2px);
 	height: 40px;
 	border-bottom: 1px solid #ddd;
-	margin: 5px 0;
+	/* margin: 5px 0; */
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 }
 
 .indent {
-	background: #ddd;
+	background: rgb(243, 240, 240);
 	width: 50px;
 	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .text {
@@ -24,11 +27,18 @@
 	width: 20px;
 	height: 20px;
 	text-align: center;
-	margin: 0 3px;
+	margin-right: 40px;
 }
 .arrow:hover {
 	color: #18dc60;
 }
 .indent-text {
 	display: none;
+}
+.delete {
+	margin-right: 40px;
+}
+.delete:hover {
+	color: red;
+	cursor: pointer;
 }

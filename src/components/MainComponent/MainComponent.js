@@ -26,14 +26,22 @@ const deleteNode = (tree, node) => {
 	const parent = getNodeByIdInTree(tree, node.parentId);
 	parent.children = parent.children.filter((child) => child.id !== node.id);
 };
+const nodeIndex = (nodeId, dataInArrayFormat) => {
+	for (let i = 0; i < dataInArrayFormat.length; i++) {
+		if (dataInArrayFormat[i].id === nodeId) return i;
+	}
+};
+
 export default function MainComponent() {
 	const [tree, setTree] = useState([]);
 	const [inputText, setInputText] = useState('');
 	const [headNode, setHeadNode] = useState(null);
 	const [level, setLevel] = useState(1);
+
 	const onChangeHandler = (e) => {
 		setInputText(e.target.value);
 	};
+
 	const handleClick = (e) => {
 		if (level === 1) {
 			addNewNode(null, new Node(inputText, level, null));
@@ -41,6 +49,8 @@ export default function MainComponent() {
 			addNewNode(headNode.id, new Node(inputText, level, headNode.id));
 		}
 	};
+	const dataStr =
+		'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(tree));
 	const addNewNode = (parentId, newNode) => {
 		const clonedPrevTree = deepCopyObjectAndFormArray(tree);
 		if (parentId) {
@@ -56,17 +66,14 @@ export default function MainComponent() {
 			});
 		}
 	};
-	const nodeIndex = (nodeId, dataInArrayFormat) => {
-		for (let i = 0; i < dataInArrayFormat.length; i++) {
-			if (dataInArrayFormat[i].id === nodeId) return i;
-		}
-	};
+
 	const onIndent = (node) => {
 		setTree((prevTree) => {
 			const clonedPrevTree = deepCopyObjectAndFormArray(prevTree);
 			const clonedNode = deepCopyObject(node);
 			if (!node.parentId) {
 				const index = nodeIndex(node.id, clonedPrevTree);
+				if (!index) return prevTree;
 				const toBeParent = clonedPrevTree[index - 1];
 				setHeadNode(toBeParent);
 				clonedNode.parentId = toBeParent.id;
@@ -92,13 +99,14 @@ export default function MainComponent() {
 			}
 		});
 	};
+
 	const onOutdent = (node) => {
 		setTree((prevTree) => {
-			const clonedPrevTree = deepCopyObject(prevTree);
-			const dataInArrayFormat = Object.values(clonedPrevTree);
+			if (!node.parentId) return prevTree;
+			const clonedPrevTree = deepCopyObjectAndFormArray(prevTree);
 			const clonedNode = deepCopyObject(node);
 			const parentNodeOfClickedNode = getNodeByIdInTree(
-				dataInArrayFormat,
+				clonedPrevTree,
 				node.parentId
 			);
 			parentNodeOfClickedNode.children = parentNodeOfClickedNode.children.filter(
@@ -109,19 +117,48 @@ export default function MainComponent() {
 			setLevel(node.level - 1);
 			setHeadNode(null);
 			if (!parentNodeOfClickedNode.parentId) {
-				dataInArrayFormat.push(clonedNode);
+				clonedPrevTree.push(clonedNode);
 			} else {
 				const toBeParentNode = getNodeByIdInTree(
-					dataInArrayFormat,
+					clonedPrevTree,
 					parentNodeOfClickedNode.parentId
 				);
 				toBeParentNode.children.push(clonedNode);
 			}
-
-			return dataInArrayFormat;
+			return clonedPrevTree;
 		});
 	};
-	const onDelete = (node) => {};
+
+	const onDelete = (node) => {
+		setTree((prevTree) => {
+			const clonedPrevTree = deepCopyObjectAndFormArray(prevTree);
+			const clonedNode = deepCopyObject(node);
+			const fondNode = getNodeByIdInTree(clonedPrevTree, node.id);
+			const parentNodeId = node.parentId;
+			if (parentNodeId) {
+				const parentNode = getNodeByIdInTree(clonedPrevTree, parentNodeId);
+				parentNode.children = parentNode.children.filter(
+					(child) => child.id !== node.id
+				);
+				return clonedPrevTree;
+			} else {
+				return clonedPrevTree.filter((child) => child.id !== node.id);
+			}
+		});
+	};
+
+	const handleFile = (e) => {
+		const content = e.target.result;
+		console.log('file content', content);
+		setTree(JSON.parse(content));
+	};
+
+	const handleChangeFile = (file) => {
+		let fileData = new FileReader();
+		fileData.onloadend = handleFile;
+		fileData.readAsText(file);
+	};
+
 	return (
 		<div>
 			<div className="tree-container">
@@ -132,15 +169,30 @@ export default function MainComponent() {
 							node={node}
 							onIndent={onIndent}
 							onOutdent={onOutdent}
+							onDelete={onDelete}
 						/>
 					);
 				})}
 			</div>
 			<input
 				type="text"
+				className="input-text"
 				onChange={onChangeHandler}
 				placeholder="add a standard"></input>
-			<button onClick={handleClick}>Add a standard</button>
+			<button className="button" onClick={handleClick}>
+				<i className="fas fa-plus-circle"></i>Add a standard
+			</button>
+			<a href={dataStr} download="treeStrc.json">
+				Download as json
+			</a>
+			<div>
+				<p>Upload file to generate structure</p>
+				<input
+					type="file"
+					accept=".json"
+					onChange={(e) => handleChangeFile(e.target.files[0])}
+				/>
+			</div>
 		</div>
 	);
 }

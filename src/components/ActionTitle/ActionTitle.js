@@ -7,10 +7,7 @@ const ActionTitle = () => {
 			<h3>Actions</h3>
 			<div>
 				<div>
-					<span>Move, </span>
 					<span>Ident, </span>
-				</div>
-				<div>
 					<span>Outdent, </span>
 					<span>Delete </span>
 				</div>

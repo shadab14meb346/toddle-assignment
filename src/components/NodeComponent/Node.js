@@ -1,12 +1,15 @@
 import React from 'react';
 import './Node.css';
 
-export const NodeComponent = ({ node, onIndent, onOutdent }) => {
+export const NodeComponent = ({ node, onIndent, onOutdent, onDelete }) => {
 	const onIndentClick = (node) => {
 		onIndent(node);
 	};
 	const onOutdentClick = (node) => {
 		onOutdent(node);
+	};
+	const onDeleteClick = (node) => {
+		onDelete(node);
 	};
 	return (
 		<>
@@ -17,14 +20,19 @@ export const NodeComponent = ({ node, onIndent, onOutdent }) => {
 				<div className="arrow" onClick={(e) => onIndentClick(node)}>
 					<i className="fas fa-arrow-right"></i>
 				</div>
+				<div className="delete" onClick={(e) => onDeleteClick(node)}>
+					<i class="far fa-trash-alt"></i>
+				</div>
 				<div
 					className="indent"
 					style={{
 						marginLeft: node.level > 0 ? `${node.level * 20}px` : 0
-					}}
-				/>
+					}}>
+					-
+				</div>
 				<div
 					className="text"
+					placeholder="Add a standard"
 					// contentEditable="true"
 					style={{
 						color:
@@ -40,6 +48,7 @@ export const NodeComponent = ({ node, onIndent, onOutdent }) => {
 						key={node.id}
 						onIndent={(node) => onIndentClick(node)}
 						onOutdent={(node) => onOutdentClick(node)}
+						onDelete={(node) => onDeleteClick(node)}
 					/>
 				);
 			})}
